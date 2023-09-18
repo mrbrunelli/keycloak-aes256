@@ -25,6 +25,11 @@
             <artifactId>keycloak-common</artifactId>
             <version>22.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.5.3.Final</version>
+        </dependency>
 
         <!-- Essas dependencias dever ser provisionadas pelo keycloak-->
         <dependency>
@@ -37,5 +42,13 @@
             <artifactId>keycloak-server-spi-private</artifactId>
             <version>22.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
