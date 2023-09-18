@@ -1,18 +1,16 @@
 package com.github.mrbrunelli.keycloak.aes256;
 
+import org.keycloak.common.util.Base64;
 import org.keycloak.credential.hash.PasswordHashProvider;
 import org.keycloak.models.PasswordPolicy;
 import org.keycloak.models.credential.PasswordCredentialModel;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.security.spec.KeySpec;
-import java.util.Base64;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.spec.AlgorithmParameterSpec;
 
 public class AES256PasswordHashProvider implements PasswordHashProvider {
     private static final String SECRET_KEY = "771a1cf03e8c7934";
@@ -42,20 +40,15 @@ public class AES256PasswordHashProvider implements PasswordHashProvider {
 
     public String encode(String rawPassword, int iterations) {
         try {
-            byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            IvParameterSpec ivspec = new IvParameterSpec(iv);
-
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            KeySpec spec = new PBEKeySpec(SECRET_KEY.toCharArray(), SALT.getBytes(), iterations, 256);
-            SecretKey tmp = factory.generateSecret(spec);
-            SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
-
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
-            return Base64.getEncoder()
-                    .encodeToString(cipher.doFinal(rawPassword.getBytes(StandardCharsets.UTF_8)));
+
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            Key key = new SecretKeySpec(md.digest(SECRET_KEY.getBytes("UTF-8")), "AES");
+            AlgorithmParameterSpec iv = new IvParameterSpec(SALT.getBytes("UTF-8"));
+
+            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+            return Base64.encodeBytes(cipher.doFinal(rawPassword.getBytes()));
         } catch (Exception e) {
-            System.out.println(e.toString());
             throw new RuntimeException(e);
         }
     }
