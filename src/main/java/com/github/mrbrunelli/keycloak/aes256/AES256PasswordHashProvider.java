@@ -12,15 +12,16 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.util.Base64;
 
 public class AES256PasswordHashProvider implements PasswordHashProvider {
-    private static final String ENCRYPTION_KEY = "771a1cf03e8c7934";
-    private static final String ENCRYPTION_IV = "ecf35be993624dc5";
-
+    private final String encryptionKey;
+    private final String encryptionIv;
     private final int defaultIterations;
     private final String providerId;
 
-    public AES256PasswordHashProvider(final String providerId, final int defaultIterations) {
+    public AES256PasswordHashProvider(final String providerId, final int defaultIterations, final String encryptionKey, final String encryptionIv) {
         this.providerId = providerId;
         this.defaultIterations = defaultIterations;
+        this.encryptionKey = encryptionKey;
+        this.encryptionIv = encryptionIv;
     }
 
     @Override
@@ -37,12 +38,12 @@ public class AES256PasswordHashProvider implements PasswordHashProvider {
         return PasswordCredentialModel.createFromValues(providerId, new byte[0], iterations, encodedPassword);
     }
 
-    public String encode(String rawPassword, int iterations) {
+    public String encode(String rawPassword, int iterations)  {
         try {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
-            Key key = new SecretKeySpec(ENCRYPTION_KEY.getBytes("UTF-8"), "AES");
-            AlgorithmParameterSpec iv = new IvParameterSpec(ENCRYPTION_IV.getBytes("UTF-8"));
+            Key key = new SecretKeySpec(encryptionKey.getBytes("UTF-8"), "AES");
+            AlgorithmParameterSpec iv = new IvParameterSpec(encryptionIv.getBytes("UTF-8"));
 
             cipher.init(Cipher.ENCRYPT_MODE, key, iv);
             return Base64.getEncoder().encodeToString(cipher.doFinal(rawPassword.getBytes()));
