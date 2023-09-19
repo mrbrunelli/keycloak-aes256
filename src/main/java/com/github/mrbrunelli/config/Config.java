@@ -8,13 +8,10 @@ public class Config {
     public static Properties getProps() {
         Properties props = new Properties();
 
-        try {
-            ClassLoader cl = Config.class.getClassLoader();
-            InputStream input = cl.getResourceAsStream("config.properties");
-
+        try (InputStream input = Config.class.getClassLoader().getResourceAsStream("config.properties")) {
             props.load(input);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to load properties file", e);
         }
 
         return props;
