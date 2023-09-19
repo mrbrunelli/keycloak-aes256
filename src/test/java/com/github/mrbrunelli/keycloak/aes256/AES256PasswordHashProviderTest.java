@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.keycloak.models.credential.PasswordCredentialModel;
 
-import java.security.InvalidKeyException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AES256PasswordHashProviderTest {
