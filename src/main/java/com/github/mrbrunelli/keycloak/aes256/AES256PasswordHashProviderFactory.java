@@ -6,13 +6,18 @@ import org.keycloak.credential.hash.PasswordHashProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 
+import java.util.Properties;
+
 public class AES256PasswordHashProviderFactory implements PasswordHashProviderFactory {
     public static final String ID = "AES";
     public static final int DEFAULT_ITERATIONS = 10;
 
     @Override
     public PasswordHashProvider create(KeycloakSession keycloakSession) {
-        return new AES256PasswordHashProvider(ID, DEFAULT_ITERATIONS);
+        Properties props = com.github.mrbrunelli.config.Config.getProps();
+        String encryptionKey = props.getProperty("encryption.key");
+        String encryptionIv = props.getProperty("encryption.iv");
+        return new AES256PasswordHashProvider(ID, DEFAULT_ITERATIONS, encryptionKey, encryptionIv);
     }
 
     @Override
