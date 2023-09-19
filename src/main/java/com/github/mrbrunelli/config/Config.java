@@ -6,14 +6,12 @@ import java.util.Properties;
 
 public class Config {
     public static Properties getProps() {
-        Properties props = new Properties();
-
         try (InputStream input = Config.class.getClassLoader().getResourceAsStream("config.properties")) {
+            Properties props = new Properties();
             props.load(input);
+            return props;
         } catch (IOException e) {
             throw new RuntimeException("Failed to load properties file", e);
         }
-
-        return props;
     }
 }

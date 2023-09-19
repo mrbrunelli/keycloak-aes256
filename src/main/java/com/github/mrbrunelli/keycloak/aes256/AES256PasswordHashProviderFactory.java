@@ -15,9 +15,13 @@ public class AES256PasswordHashProviderFactory implements PasswordHashProviderFa
     @Override
     public PasswordHashProvider create(KeycloakSession keycloakSession) {
         Properties props = com.github.mrbrunelli.config.Config.getProps();
-        String encryptionKey = props.getProperty("encryption.key");
-        String encryptionIv = props.getProperty("encryption.iv");
-        return new AES256PasswordHashProvider(ID, DEFAULT_ITERATIONS, encryptionKey, encryptionIv);
+
+        return new AES256PasswordHashProvider(
+                ID,
+                DEFAULT_ITERATIONS,
+                props.getProperty("encryption.key"),
+                props.getProperty("encryption.iv")
+        );
     }
 
     @Override
